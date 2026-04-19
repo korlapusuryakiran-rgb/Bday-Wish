@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Bday wishes from Surya Kiran</title>
+    <style>
+      :root {
+        --bg-1: #071428;
+        --glass: rgba(255, 255, 255, 0.04);
+        --muted: #aebfd0;
+        --accent-1: #4aa3ff;
+        --accent-2: #6ee0c6;
+        --accent-grad: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --radius: 14px;
+        --shadow: 0 14px 40px rgba(6, 18, 36, 0.55);
+        --text: #eaf4ff;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial;
+        background:
+          radial-gradient(
+            900px 400px at 10% 10%,
+            rgba(110, 160, 255, 0.03),
+            transparent
+          ),
+          linear-gradient(180deg, #041026 0%, #071428 60%);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow: hidden;
+      }
+      /* Canvas layers */
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      /* Stage */
+      .stage {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        z-index: 2;
+      }
+      /* Landing gift */
+      .landing {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 920px;
+      }
+      .gift-wrap {
+        width: min(420px, 86vw);
+        aspect-ratio: 1/1;
+        perspective: 1400px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .gift {
+        width: 100%;
+        height: 100%;
+        border-radius: 18px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 900ms cubic-bezier(0.2, 0.9, 0.2, 1);
+        box-shadow: var(--shadow);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.01)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .lid {
+        position: absolute;
+        left: 6%;
+        top: -6%;
+        width: 88%;
+        height: 46%;
+        border-radius: 14px;
+        transform-origin: 50% 100%;
+        background: var(--accent-grad);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        transition: transform 900ms cubic-bezier(0.2, 0.9, 0.2, 1);
+      }
+      .body {
+        position: absolute;
+        left: 6%;
+        bottom: 6%;
+        width: 88%;
+        height: 64%;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        box-sizing: border-box;
+      }
+      .ribbon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .bow {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        color: #fff;
+        font-weight: 800;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .gift.open {
+        transform: translateY(-6%) rotateX(6deg);
+      }
+      .gift.open .lid {
+        transform: rotateX(-78deg) translateY(-6%);
+      }
+      .card {
+        position: absolute;
+        bottom: 10%;
+        left: 8%;
+        width: 84%;
+        padding: 14px;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.01)
+        );
+        color: var(--muted);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+        transform: translateY(24px);
+        opacity: 0;
+        transition: all 700ms ease 420ms;
+      }
+      .gift.open .card {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .tap-title {
+        font-weight: 800;
+        font-size: 20px;
+        text-align: center;
+        color: var(--text);
+      }
+      .tap-sub {
+        font-size: 13px;
+        color: var(--muted);
+        text-align: center;
+      }
+      /* App */
+      .app {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+        box-sizing: border-box;
+        transform: translateY(100%);
+        transition: transform 700ms cubic-bezier(0.2, 0.9, 0.2, 1);
+      }
+      .app.visible {
+        transform: translateY(0);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(8px);
+      }
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #2b6cff, #6ad1c9);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: #fff;
+        box-shadow: var(--shadow);
+        font-size: 18px;
+      }
+      .title {
+        font-weight: 800;
+        font-size: 15px;
+      }
+      .subtitle {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .pill.active {
+        background: var(--accent-grad);
+        color: #fff;
+        box-shadow: var(--shadow);
+        transform: translateY(-4px);
+      }
+      main {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+        align-items: flex-start;
+        flex: 1;
+        overflow: hidden;
+      }
+      .left,
+      .right {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border-radius: 12px;
+        padding: 12px;
+        box-sizing: border-box;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .left {
+        flex: 1;
+        min-width: 220px;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        height: calc(100vh - 220px);
+        overflow: hidden;
+      }
+      .right {
+        width: 260px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: 200px;
+      }
+      .message-box {
+        flex: 1;
+        border-radius: 12px;
+        padding: 18px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.06),
+          rgba(255, 255, 255, 0.01)
+        );
+        position: relative;
+        overflow: auto;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      }
+      .message {
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--text);
+        white-space: pre-wrap;
+        min-height: 120px;
+      }
+      .typing-cursor {
+        display: inline-block;
+        width: 10px;
+        height: 22px;
+        background: linear-gradient(180deg, #fff, #dfefff);
+        margin-left: 6px;
+        vertical-align: middle;
+        animation: blink 1s steps(2) infinite;
+        border-radius: 3px;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: var(--accent-grad);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+        border: none;
+        box-shadow: var(--shadow);
+        font-size: 14px;
+      }
+      .btn.ghost {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--muted);
+        box-shadow: none;
+      }
+      .input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        width: 100%;
+      }
+      .input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text);
+        font-size: 15px;
+      }
+      .small {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .sr-only {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+      /* Dark mode */
+      body.dark {
+        background: linear-gradient(180deg, #02040a 0%, #071428 60%);
+      }
+      /* Responsive */
+      @media (min-width: 900px) {
+        .app {
+          padding: 28px;
+        }
+        .left {
+          height: calc(100vh - 260px);
+        }
+        .right {
+          width: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="confettiCanvas"></canvas>
+    <canvas id="fireworksCanvas"></canvas>
+
+    <div class="stage">
+      <section class="landing" id="landing" aria-label="Open Birthday Surprise">
+        <div
+          class="gift-wrap"
+          id="giftWrap"
+          role="button"
+          tabindex="0"
+          aria-pressed="false"
+          aria-label="Open gift"
+        >
+          <div class="gift" id="gift">
+            <div class="lid" id="lid"></div>
+            <div class="ribbon"><div class="bow">🎁</div></div>
+            <div class="body">
+              <div class="card">
+                <div
+                  style="font-weight: 800; font-size: 18px; color: var(--text)"
+                >
+                  A Refined Surprise
+                </div>
+                <div
+                  style="margin-top: 8px; color: var(--muted); font-size: 13px"
+                >
+                  Tap to open and personalize your message
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tap-title">Open Birthday Surprise 🎁</div>
+        <div class="tap-sub">Tap the gift to begin</div>
+      </section>
+
+      <section class="app" id="app" aria-hidden="true">
+        <header>
+          <div class="brand">
+            <div class="logo">SK</div>
+            <div>
+              <div class="title">Bday Wishes from Surya Kiran</div>
+              <div class="subtitle"></div>
+            </div>
+          </div>
+
+          <div class="controls" role="toolbar" aria-label="Controls">
+            <div id="darkToggle" class="pill" title="Toggle dark mode">
+              🌙 Dark
+            </div>
+            <div id="playToggle" class="pill" title="Play / Pause audio">
+              🔊 Play
+            </div>
+            <div id="muteToggle" class="pill" title="Mute audio">🔈 Mute</div>
+          </div>
+        </header>
+
+        <main>
+          <div class="left">
+            <div style="display: flex; gap: 10px; align-items: center">
+              <div style="font-weight: 800">Enter Name</div>
+              <div class="small" style="color: var(--muted)">
+                Personalize the wish (optional)
+              </div>
+            </div>
+
+            <div class="input-row" style="margin-top: 6px">
+              <input
+                id="nameInput"
+                class="input"
+                type="text"
+                placeholder="Enter name (e.g., Rahul)"
+                aria-label="Enter name"
+              />
+              <button
+                id="copyLinkBtn"
+                class="btn ghost"
+                title="Copy share link"
+              >
+                Copy Share Link
+              </button>
+            </div>
+
+            <div
+              class="message-box"
+              id="messageBox"
+              role="region"
+              aria-live="polite"
+              style="margin-top: 12px"
+            >
+              <div class="message" id="messageText" aria-atomic="true"></div>
+            </div>
+
+            <div class="actions" style="margin-top: 6px">
+              <button id="nextBtn" class="btn">Next Wish</button>
+              <button id="confettiBtn" class="btn ghost">Confetti</button>
+              <button id="fireworksBtn" class="btn ghost">Fireworks</button>
+            </div>
+
+            <div
+              style="
+                margin-top: auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div class="small">
+                Share the link to send a personalized wish.
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button id="downloadBtn" class="btn ghost">
+                  Save Snapshot
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="right" aria-hidden="false">
+            <div style="font-weight: 800">Preview</div>
+            <div class="small" style="margin-top: 8px; color: var(--muted)">
+              Messages will include the name you enter. If empty, "Dear Friend"
+              is used.
+            </div>
+            <div style="margin-top: 12px">
+              <div style="font-weight: 700; margin-bottom: 6px">
+                Current share URL
+              </div>
+              <input
+                id="shareUrl"
+                class="input"
+                readonly
+                style="font-size: 13px"
+              />
+            </div>
+          </aside>
+        </main>
+      </section>
+    </div>
+
+    <div class="sr-only" id="sr-announcer" aria-live="polite"></div>
+
+    <script>
+      const TEMPLATES = [
+        "Happy Birthday, {name}! Wishing you a year filled with success, growth, and happiness.",
+        "{name}, may this year open new doors of opportunity and achievement.",
+        "Celebrate where you are today and embrace where you're going tomorrow, {name}.",
+        "Another year, another opportunity to grow and shine—happy birthday, {name}.",
+        "Success and happiness are yours—today and always. Best wishes, {name}.",
+        "Make this year your best chapter yet, {name}. Keep moving forward.",
+        "Great things take time—keep going, {name}. Happy Birthday.",
+        "Your journey is just getting started, {name}. Wishing you momentum and clarity.",
+        "{name}, may clarity, momentum, and meaningful progress follow you this year.",
+        "Warm wishes for continued professional fulfillment and personal well-being, {name}.",
+      ];
+
+      const state = {
+        index: 0,
+        name: "",
+        audio: {
+          ctx: null,
+          master: null,
+          playing: false,
+          muted: false,
+          melodyController: null,
+          padNode: null,
+        },
+        visuals: {
+          confetti: [],
+          fireworks: [],
+          bgParticles: [],
+        },
+        rafId: null,
+      };
+
+      const landing = document.getElementById("landing");
+      const giftWrap = document.getElementById("giftWrap");
+      const gift = document.getElementById("gift");
+      const app = document.getElementById("app");
+      const nameInput = document.getElementById("nameInput");
+      const copyLinkBtn = document.getElementById("copyLinkBtn");
+      const shareUrl = document.getElementById("shareUrl");
+      const messageText = document.getElementById("messageText");
+      const nextBtn = document.getElementById("nextBtn");
+      const confettiBtn = document.getElementById("confettiBtn");
+      const fireworksBtn = document.getElementById("fireworksBtn");
+      const playToggle = document.getElementById("playToggle");
+      const muteToggle = document.getElementById("muteToggle");
+      const darkToggle = document.getElementById("darkToggle");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const bgCanvas = document.getElementById("bgCanvas");
+      const confettiCanvas = document.getElementById("confettiCanvas");
+      const fireworksCanvas = document.getElementById("fireworksCanvas");
+      const bgCtx = bgCanvas.getContext("2d");
+      const confettiCtx = confettiCanvas.getContext("2d");
+      const fwCtx = fireworksCanvas.getContext("2d");
+      const sr = document.getElementById("sr-announcer");
+
+      const rand = (a, b) => a + Math.random() * (b - a);
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+      const safeText = (s) => (s || "").toString().trim();
+      const encodeName = (n) => encodeURIComponent(n || "");
+      const decodeName = (s) => decodeURIComponent(s || "");
+      const getDefaultName = () => "Dear Friend";
+      const midiToFreq = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+      function readNameFromUrl() {
+        try {
+          const params = new URLSearchParams(location.search);
+          const n = params.get("name");
+          return n ? safeText(n) : "";
+        } catch (e) {
+          return "";
+        }
+      }
+      function updateShareUrl() {
+        const base = location.origin + location.pathname;
+        const name = safeText(state.name);
+        const url = name ? `${base}?name=${encodeName(name)}` : base;
+        shareUrl.value = url;
+        return url;
+      }
+      async function copyShareLink() {
+        const url = updateShareUrl();
+        try {
+          await navigator.clipboard.writeText(url);
+          announce("Share link copied to clipboard");
+          copyLinkBtn.textContent = "Copied";
+          setTimeout(() => (copyLinkBtn.textContent = "Copy Share Link"), 1400);
+        } catch (e) {
+          const tmp = document.createElement("textarea");
+          tmp.value = url;
+          document.body.appendChild(tmp);
+          tmp.select();
+          try {
+            document.execCommand("copy");
+            announce("Share link copied");
+          } catch (err) {
+            announce("Unable to copy");
+          }
+          tmp.remove();
+        }
+      }
+
+      function resizeCanvases() {
+        const dpr = devicePixelRatio || 1;
+        [bgCanvas, confettiCanvas, fireworksCanvas].forEach((c) => {
+          c.width = innerWidth * dpr;
+          c.height = innerHeight * dpr;
+          c.style.width = innerWidth + "px";
+          c.style.height = innerHeight + "px";
+          const ctx = c.getContext("2d");
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        });
+        initBgParticles();
+      }
+      addEventListener("resize", resizeCanvases);
+      resizeCanvases();
+
+      function initBgParticles() {
+        const count = Math.max(8, Math.floor(innerWidth / 160));
+        state.visuals.bgParticles = Array.from({ length: count }).map(() => ({
+          x: Math.random() * innerWidth,
+          y: innerHeight + Math.random() * innerHeight * 0.6,
+          r: rand(6, 18),
+          speed: rand(0.12, 0.6),
+          sway: rand(0.2, 0.9),
+          hue: rand(200, 220),
+          alpha: rand(0.08, 0.28),
+        }));
+      }
+      function drawBg() {
+        bgCtx.clearRect(0, 0, innerWidth, innerHeight);
+        const g = bgCtx.createLinearGradient(0, 0, 0, innerHeight);
+        g.addColorStop(0, "rgba(255,255,255,0.01)");
+        g.addColorStop(1, "rgba(0,0,0,0.12)");
+        bgCtx.fillStyle = g;
+        bgCtx.fillRect(0, 0, innerWidth, innerHeight);
+
+        state.visuals.bgParticles.forEach((p) => {
+          p.y -= p.speed;
+          p.x += Math.sin((p.y + p.sway * 100) / 60) * 0.3;
+          if (p.y < -60) {
+            p.y = innerHeight + 40;
+            p.x = Math.random() * innerWidth;
+          }
+          const grad = bgCtx.createRadialGradient(
+            p.x - p.r / 3,
+            p.y - p.r / 3,
+            2,
+            p.x,
+            p.y,
+            p.r * 1.2,
+          );
+          grad.addColorStop(0, `hsla(${p.hue},60%,70%,${p.alpha})`);
+          grad.addColorStop(1, `hsla(${p.hue},60%,45%,${p.alpha * 0.9})`);
+          bgCtx.fillStyle = grad;
+          bgCtx.beginPath();
+          bgCtx.ellipse(p.x, p.y, p.r, p.r * 1.2, 0, 0, Math.PI * 2);
+          bgCtx.fill();
+        });
+      }
+
+      function burstConfetti(x, y, count = 48) {
+        const colors = ["#4aa3ff", "#6ee0c6", "#dfeffb", "#f3fbf9"];
+        const newPieces = Array.from({ length: count }).map(() => ({
+          x,
+          y,
+          vx: rand(-4, 4),
+          vy: rand(-8, -2),
+          size: rand(6, 10),
+          rot: rand(0, 360),
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: Math.floor(rand(60, 120)),
+        }));
+        state.visuals.confetti = state.visuals.confetti.concat(newPieces);
+      }
+      function drawConfetti() {
+        confettiCtx.clearRect(0, 0, innerWidth, innerHeight);
+        state.visuals.confetti = state.visuals.confetti
+          .map((p) => {
+            p.vy += 0.12;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vx * 2;
+            p.life--;
+            return p;
+          })
+          .filter((p) => {
+            if (p.life <= 0 || p.y > innerHeight + 60) return false;
+            confettiCtx.save();
+            confettiCtx.translate(p.x, p.y);
+            confettiCtx.rotate((p.rot * Math.PI) / 180);
+            confettiCtx.fillStyle = p.color;
+            confettiCtx.fillRect(
+              -p.size / 2,
+              -p.size / 2,
+              p.size,
+              p.size * 0.6,
+            );
+            confettiCtx.restore();
+            return true;
+          });
+      }
+
+      function triggerFireworks(count = 2) {
+        const newFws = Array.from({ length: count }).map(() => ({
+          x: rand(innerWidth * 0.2, innerWidth * 0.8),
+          y: innerHeight + 10,
+          tx: rand(innerWidth * 0.2, innerWidth * 0.8),
+          ty: rand(innerHeight * 0.12, innerHeight * 0.4),
+          exploded: false,
+          hue: rand(200, 220),
+          particles: [],
+        }));
+        state.visuals.fireworks = state.visuals.fireworks.concat(newFws);
+      }
+      function drawFireworks() {
+        fwCtx.clearRect(0, 0, innerWidth, innerHeight);
+        state.visuals.fireworks = (state.visuals.fireworks || [])
+          .map((fw) => {
+            if (!fw.exploded) {
+              fw.x += (fw.tx - fw.x) * 0.06;
+              fw.y += (fw.ty - fw.y) * 0.06;
+              fwCtx.beginPath();
+              fwCtx.fillStyle = `hsl(${fw.hue},60%,60%)`;
+              fwCtx.arc(fw.x, fw.y, 3, 0, Math.PI * 2);
+              fwCtx.fill();
+              if (Math.hypot(fw.tx - fw.x, fw.ty - fw.y) < 8) {
+                fw.exploded = true;
+                fw.particles = Array.from({ length: 40 }).map(() => ({
+                  x: fw.x,
+                  y: fw.y,
+                  vx: Math.cos(rand(0, Math.PI * 2)) * rand(1, 3),
+                  vy: Math.sin(rand(0, Math.PI * 2)) * rand(1, 3),
+                  life: Math.floor(rand(40, 90)),
+                  color: `hsl(${fw.hue + rand(-20, 20)},60%,60%)`,
+                }));
+              }
+            } else {
+              fw.particles = fw.particles
+                .map((p) => {
+                  p.vy += 0.04;
+                  p.x += p.vx;
+                  p.y += p.vy;
+                  p.life--;
+                  return p;
+                })
+                .filter((p) => {
+                  if (p.life <= 0) return false;
+                  fwCtx.beginPath();
+                  fwCtx.fillStyle = p.color;
+                  fwCtx.globalAlpha = Math.max(0, p.life / 100);
+                  fwCtx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+                  fwCtx.fill();
+                  fwCtx.globalAlpha = 1;
+                  return true;
+                });
+            }
+            return fw;
+          })
+          .filter((fw) => (fw.exploded ? fw.particles.length > 0 : true));
+      }
+
+      function visualsLoop() {
+        drawBg();
+        drawConfetti();
+        drawFireworks();
+        state.rafId = requestAnimationFrame(visualsLoop);
+      }
+      visualsLoop();
+
+      let typingToken = 0;
+      async function typeMessage(text, speed = 28) {
+        typingToken++;
+        const token = typingToken;
+        messageText.textContent = "";
+        const cursor = document.createElement("span");
+        cursor.className = "typing-cursor";
+        let i = 0;
+        while (i <= text.length) {
+          if (token !== typingToken) return;
+          messageText.textContent = text.slice(0, i);
+          if (i < text.length) messageText.appendChild(cursor);
+          await new Promise((r) => setTimeout(r, speed + Math.random() * 18));
+          i++;
+        }
+        cursor.remove();
+      }
+
+      function formatTemplate(template, name) {
+        const cleanName = safeText(name);
+
+        if (!cleanName) {
+          const friendTemplates = [
+            "Happy Birthday! Wishing you success, happiness, and growth ahead.",
+            "Wishing you a wonderful year filled with opportunities and achievements.",
+            "May this special day bring positivity and success into your life.",
+            "Keep growing, keep shining—your best days are ahead.",
+            "Wishing you strength, success, and meaningful progress this year.",
+          ];
+
+          return friendTemplates[state.index % friendTemplates.length];
+        }
+
+        return template.replace(/\{name\}/g, cleanName);
+      }
+      function showMessage(next = false) {
+        if (next) state.index = (state.index + 1) % TEMPLATES.length;
+        const template = TEMPLATES[state.index];
+        const text = formatTemplate(template, state.name);
+        typeMessage(text);
+        announce(
+          `Wish ${state.index + 1} of ${TEMPLATES.length} for ${state.name || "Dear Friend"}`,
+        );
+      }
+
+      giftWrap.addEventListener("click", openGift);
+      giftWrap.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") openGift();
+      });
+
+      function openGift() {
+        if (gift.classList.contains("open")) return;
+        gift.classList.add("open");
+        giftWrap.setAttribute("aria-pressed", "true");
+        setTimeout(() => {
+          landing.style.display = "none";
+          app.classList.add("visible");
+          app.setAttribute("aria-hidden", "false");
+
+          burstConfetti(innerWidth / 2, innerHeight / 2, 40);
+
+          burstConfetti(innerWidth / 2, 0, 40);
+
+          burstConfetti(0, innerHeight / 2, 40);
+
+          burstConfetti(innerWidth, innerHeight / 2, 40);
+
+          burstConfetti(innerWidth / 2, innerHeight, 40);
+          playPop(2);
+          triggerFireworks(2);
+          startAudioIfAllowed();
+          showMessage(false);
+          updateShareUrl();
+        }, 700);
+      }
+
+      function initAudio() {
+        if (state.audio.ctx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const master = ctx.createGain();
+        master.gain.value = state.audio.muted ? 0 : 0.9;
+        master.connect(ctx.destination);
+        state.audio.ctx = ctx;
+        state.audio.master = master;
+      }
+
+      const MELODY = [
+        [64, 0.5],
+        [64, 0.5],
+        [66, 1],
+        [64, 1],
+        [69, 1],
+        [68, 2],
+        [64, 0.5],
+        [64, 0.5],
+        [66, 1],
+        [64, 1],
+        [71, 1],
+        [69, 2],
+      ];
+
+      function stopMelody() {
+        if (!state.audio.melodyController) return;
+        const { nodes, timer } = state.audio.melodyController;
+        clearTimeout(timer);
+        nodes.forEach((n) => {
+          try {
+            n.g.gain.cancelScheduledValues(0);
+            n.g.gain.exponentialRampToValueAtTime(
+              0.0001,
+              state.audio.ctx.currentTime + 0.02,
+            );
+            n.o.stop(state.audio.ctx.currentTime + 0.03);
+          } catch (e) {}
+        });
+        state.audio.melodyController = null;
+        state.audio.playing = false;
+      }
+
+      function playMelodyLoop() {
+        initAudio();
+        stopMelody();
+        const ctx = state.audio.ctx;
+        const bpm = 72;
+        const beatSec = 60 / bpm;
+        const startTime = ctx.currentTime + 0.05;
+        const nodes = [];
+        let t = startTime;
+        MELODY.forEach(([midi, dur]) => {
+          const freq = midiToFreq(midi);
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = "sine";
+          o.frequency.value = freq;
+          g.gain.value = 0;
+          o.connect(g);
+          g.connect(state.audio.master);
+          o.start(t);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(0.07, t + 0.02);
+          g.gain.linearRampToValueAtTime(0.0001, t + dur * beatSec);
+          o.stop(t + dur * beatSec + 0.05);
+          nodes.push({ o, g });
+          t += dur * beatSec;
+        });
+        const total = t - startTime;
+        const timer = setTimeout(() => {
+          if (state.audio.playing && !state.audio.muted) playMelodyLoop();
+        }, total * 1000);
+        state.audio.melodyController = { nodes, timer };
+        state.audio.playing = true;
+        startPad();
+        updateAudioUI();
+      }
+
+      /* Ambient pad */
+      function startPad() {
+        if (!state.audio.ctx || state.audio.padNode) return;
+        const ctx = state.audio.ctx;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 110;
+        g.gain.value = 0.02;
+        osc.connect(g);
+        g.connect(state.audio.master);
+        osc.start();
+        state.audio.padNode = { osc, g };
+      }
+      function stopPad() {
+        if (!state.audio.padNode) return;
+        try {
+          state.audio.padNode.g.gain.exponentialRampToValueAtTime(
+            0.0001,
+            state.audio.ctx.currentTime + 0.2,
+          );
+          state.audio.padNode.osc.stop(state.audio.ctx.currentTime + 0.22);
+        } catch (e) {}
+        state.audio.padNode = null;
+      }
+
+      function playPop(count = 1) {
+        initAudio();
+        const ctx = state.audio.ctx;
+        for (let i = 0; i < count; i++) {
+          const t = ctx.currentTime + i * 0.06;
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = "triangle";
+          o.frequency.setValueAtTime(rand(500, 1100), t);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(0.12, t + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+          o.connect(g);
+          g.connect(state.audio.master);
+          o.start(t);
+          o.stop(t + 0.35);
+        }
+      }
+
+      async function startAudioIfAllowed() {
+        try {
+          initAudio();
+          if (state.audio.ctx.state === "suspended")
+            await state.audio.ctx.resume();
+          state.audio.muted = false;
+          playMelodyLoop();
+          announce("Audio started");
+        } catch (e) {
+          console.warn("Audio start blocked", e);
+        }
+      }
+
+      function stopAllAudio() {
+        try {
+          stopMelody();
+          stopPad();
+          if (state.audio.ctx) state.audio.ctx.close();
+        } catch (e) {}
+        state.audio.ctx = null;
+        state.audio.master = null;
+        state.audio.playing = false;
+        updateAudioUI();
+      }
+
+      function togglePlay() {
+        if (!state.audio.playing) {
+          startAudioIfAllowed();
+        } else {
+          stopAllAudio();
+        }
+      }
+
+      function toggleMute() {
+        state.audio.muted = !state.audio.muted;
+        if (state.audio.master)
+          state.audio.master.gain.value = state.audio.muted ? 0 : 0.9;
+        updateAudioUI();
+      }
+
+      function updateAudioUI() {
+        playToggle.textContent =
+          state.audio.playing && !state.audio.muted
+            ? "🔊 Playing"
+            : state.audio.muted
+              ? "🔈 Muted"
+              : "▶ Play";
+        muteToggle.textContent = state.audio.muted ? "Muted" : "🔈 Mute";
+      }
+
+      nextBtn.addEventListener("click", () => {
+        showMessage(true);
+        if (state.audio.ctx && !state.audio.muted) playPop(1);
+      });
+      confettiBtn.addEventListener("click", () => {
+        burstConfetti(innerWidth / 2, innerHeight / 3, 48);
+        if (state.audio.ctx && !state.audio.muted) playPop(1);
+      });
+      fireworksBtn.addEventListener("click", () => {
+        triggerFireworks(2);
+        if (state.audio.ctx && !state.audio.muted) playPop(1);
+      });
+      playToggle.addEventListener("click", () => togglePlay());
+      muteToggle.addEventListener("click", () => toggleMute());
+      darkToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        darkToggle.classList.toggle("active");
+      });
+      downloadBtn.addEventListener("click", () => downloadSnapshot());
+      copyLinkBtn.addEventListener("click", () => copyShareLink());
+
+      nameInput.addEventListener("input", (e) => {
+        state.name = safeText(e.target.value);
+        updateShareUrl();
+        showMessage(false);
+      });
+      nameInput.addEventListener("change", () => updateShareUrl());
+
+      document.addEventListener("keydown", (e) => {
+        if (
+          app.classList.contains("visible") &&
+          (e.key === " " || e.key === "Enter")
+        ) {
+          e.preventDefault();
+          nextBtn.click();
+        }
+      });
+
+      function downloadSnapshot() {
+        const dpr = devicePixelRatio || 1;
+        const c = document.createElement("canvas");
+        c.width = innerWidth * dpr;
+        c.height = innerHeight * dpr;
+        const ctx = c.getContext("2d");
+        ctx.scale(dpr, dpr);
+        ctx.drawImage(bgCanvas, 0, 0, innerWidth, innerHeight);
+        ctx.drawImage(confettiCanvas, 0, 0, innerWidth, innerHeight);
+        ctx.drawImage(fireworksCanvas, 0, 0, innerWidth, innerHeight);
+        ctx.fillStyle = "rgba(2,8,20,0.6)";
+        ctx.fillRect(20, 20, innerWidth - 40, innerHeight - 40);
+        ctx.fillStyle = "#fff";
+        ctx.font = "22px Inter, sans-serif";
+        ctx.fillText("Happy Birthday", 40, 64);
+        ctx.font = "16px Inter, sans-serif";
+        const lines = messageText.textContent.split("\n");
+        lines.forEach((ln, i) => ctx.fillText(ln, 40, 100 + i * 24));
+        c.toBlob((blob) => {
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "birthday-wish.png";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }, "image/png");
+      }
+
+      function announce(text) {
+        if (!sr) return;
+        sr.textContent = "";
+        setTimeout(() => (sr.textContent = text), 50);
+      }
+
+      (function boot() {
+        const urlName = readNameFromUrl();
+        state.name = urlName || "";
+        nameInput.value = state.name;
+        updateShareUrl();
+
+        setTimeout(
+          () => burstConfetti(innerWidth / 2, innerHeight / 2, 18),
+          1200,
+        );
+        showMessage(false);
+      })();
+
+      addEventListener("beforeunload", () => {
+        cancelAnimationFrame(state.rafId);
+        stopAllAudio();
+      });
+      addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          cancelAnimationFrame(state.rafId);
+        } else {
+          visualsLoop();
+        }
+      });
+    </script>
+  </body>
+</html>
